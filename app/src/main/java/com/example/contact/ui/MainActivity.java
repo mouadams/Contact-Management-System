@@ -1,4 +1,4 @@
-package com.example.contact;
+package com.example.contact.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.contact.helpers.DataBase;
+import com.example.contact.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,18 +27,14 @@ public class MainActivity extends AppCompatActivity {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // This triggers the SQLiteOpenHelper to actually create the file
+
                 DataBase.getInstance(getApplicationContext()).getWritableDatabase();
 
-                // Use "Contact.db" (this MUST match the name in your DataBase constructor)
                 java.io.File dbFile = getApplicationContext().getDatabasePath("Contact.db");
 
                 if (dbFile.exists()) {
                     Toast.makeText(MainActivity.this,
                             "Database created successfully! ✅", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this,
-                            "Still not found. Check Logcat for errors.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

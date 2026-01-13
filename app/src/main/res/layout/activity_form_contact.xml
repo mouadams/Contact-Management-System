@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FormContactActivity"
+    tools:context=".ui.FormContactActivity"
     android:padding="40dp">
 
     <EditText

@@ -1,4 +1,4 @@
-package com.example.contact;
+package com.example.contact.helpers;
 
 
 import android.content.ContentValues;
@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.Nullable;
+import com.example.contact.model.Contact;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public DataBase(Context context) {
-        super(context, "Contact.db", null, 1);
+        super(context, "Contact.db", null, 2);
 
     }
 
@@ -55,29 +55,69 @@ public class DataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public ArrayList<String> getAllContacts() {
-        ArrayList<String> contacts = new ArrayList<>();
+    public void addContact(String name, String phone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NAME, name);
+        values.put(COL_PHONE, phone);
+        db.insert(TABLE_CONTACT, null, values);
+    }
+
+    public ArrayList<Contact> getAllContacts() {
+        ArrayList<Contact> contacts = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
-                "SELECT " +  "  " + COL_NAME + ", " + COL_PHONE + " FROM " + TABLE_CONTACT,
+                "SELECT " + COL_ID + ", " + COL_NAME + ", " + COL_PHONE + " FROM " + TABLE_CONTACT,
                 null
         );
 
         if (cursor.moveToFirst()) {
             do {
-                //int id = cursor.getInt(0);
-                String name = String.valueOf(cursor.getColumnIndex("name"));
-                String phone = String.valueOf(cursor.getColumnIndex("phone"));
-                contacts.add(": " + name + " - " + phone);
+                int id = cursor.getInt(
+                        cursor.getColumnIndexOrThrow(COL_ID)
+                );
+
+                String name = cursor.getString(
+                        cursor.getColumnIndexOrThrow(COL_NAME)
+                );
+
+                String phone = cursor.getString(
+                        cursor.getColumnIndexOrThrow(COL_PHONE)
+                );
+
+                contacts.add(new Contact(id, name, phone));
+
             } while (cursor.moveToNext());
         }
 
         cursor.close();
-        db.close();
 
         return contacts;
+    }
+    public Contact getContactById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(
+                TABLE_CONTACT,
+                new String[]{COL_ID, COL_NAME, COL_PHONE},
+                COL_ID + " = ?",
+                new String[]{String.valueOf(id)},
+                null, null, null, null
+        );
+
+        Contact contact = null;
+        if (cursor != null) {
+            if(cursor.moveToFirst()) {
+                contact = new Contact(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COL_NAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COL_PHONE))
+                );
+            }
+            cursor.close();
+        }
+        return contact;
     }
 
     public boolean updateContact(int id, String name, String phone) {
@@ -94,7 +134,6 @@ public class DataBase extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)}
         );
 
-        db.close();
         return rows > 0;
     }
 
@@ -108,7 +147,6 @@ public class DataBase extends SQLiteOpenHelper {
                 new String[]{String.valueOf(id)}
         );
 
-        db.close();
         return rows > 0;
     }
 

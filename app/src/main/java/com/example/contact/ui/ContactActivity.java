@@ -1,12 +1,13 @@
-package com.example.contact;
+package com.example.contact.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.contact.R;
 
 public class ContactActivity extends AppCompatActivity {
 
@@ -15,7 +16,7 @@ public class ContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        TextView tvHello = findViewById(R.id.tvHello);
+        TextView tvHello = findViewById(R.id.welcome);
         Button btnBack = findViewById(R.id.btnBack);
 
 
@@ -24,18 +25,17 @@ public class ContactActivity extends AppCompatActivity {
             tvHello.setText("Hello " + name + "!");
         }
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ContactActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+
+        btnBack.setOnClickListener(view -> {
+
+            Intent intent = new Intent(ContactActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         Button Display = findViewById(R.id.Display);
         Display.setOnClickListener(view -> {
-           Intent ContactIntent = new Intent(ContactActivity.this, ContactListActivity.class);
+            Intent ContactIntent = new Intent(ContactActivity.this, ContactListActivity.class);
             startActivity(ContactIntent);
         });
 

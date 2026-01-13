@@ -1,8 +1,6 @@
-package com.example.contact;
+package com.example.contact.ui;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.contact.helpers.DataBase;
+import com.example.contact.R;
 
 public class FormContactActivity extends AppCompatActivity {
 
@@ -29,37 +30,31 @@ public class FormContactActivity extends AppCompatActivity {
 
 
 
-        EditText etName = findViewById(R.id.name);
-        EditText etPhone = findViewById(R.id.phoneNumber);
+        EditText Name = findViewById(R.id.name);
+        EditText Phone = findViewById(R.id.phoneNumber);
         Button sub = findViewById(R.id.submit);
 
         sub.setOnClickListener(v -> {
 
-            String nameInput = etName.getText().toString().trim();
-            String phoneInput = etPhone.getText().toString().trim();
+            String nameInput = Name.getText().toString().trim();
+            String phoneInput = Phone.getText().toString().trim();
 
 
-            if (nameInput.isEmpty() || phoneInput.isEmpty()) {
+            if (nameInput.isEmpty() ) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            SQLiteDatabase db = DataBase.getInstance(this).getWritableDatabase();
-            db.execSQL("INSERT INTO Contact (name, phone) VALUES ('" + nameInput + "', '" + phoneInput + "')");
+            DataBase.getInstance(this).addContact(nameInput, phoneInput);
 
+            Toast.makeText(this, "Contact added: " + nameInput, Toast.LENGTH_SHORT).show();
 
+            Intent backToContact = new Intent(FormContactActivity.this, ContactActivity.class);
 
-            //Contact newContact = new Contact(nameInput, phoneInput);
-            //ContactDB.ContactArray.add(String.valueOf(newContact));
-
-            Toast.makeText(this, "Bien ajouté : " + nameInput, Toast.LENGTH_SHORT).show();
-
-
-            Intent BackToContact = new Intent(FormContactActivity.this, ContactActivity.class);
-            startActivity(BackToContact);
+            startActivity(backToContact);
         });
 
 
 
-        }
+    }
 }
